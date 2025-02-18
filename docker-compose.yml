@@ -1,0 +1,61 @@
+services:
+  bot:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    volumes:
+      - ./src:/app
+    command: python -m bot.main
+
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    ports:
+      - "${AUTH_PORT}:5000"
+    volumes:
+      - ./src:/app
+    command: uvicorn auth.main:app --host 0.0.0.0 --port 5000 --reload
+
+  scheduler:
+    restart: on-failure
+    depends_on:
+      - bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    volumes:
+      - ./src:/app
+    command: python -m scheduler.schedule
+
+  db:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    expose:
+      - ${POSTGRES_PORT}
+    command: -p ${POSTGRES_PORT}
+
+
+volumes:
+  postgres_data:
+
