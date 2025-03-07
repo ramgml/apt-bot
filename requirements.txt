@@ -1,2 +1,9 @@
-aiogram
-python-decouple
+aiogram==3.18.0
+python-decouple==3.8
+aiogoogle==5.14.1
+fastapi==0.115.8
+uvicorn[standard]==0.34.0
+SQLAlchemy
+asyncpg==0.30.0
+alembic==1.14.1
+aioschedule==0.5.2
