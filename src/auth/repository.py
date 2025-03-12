@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth.models import User
 
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 

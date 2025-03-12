@@ -13,7 +13,7 @@ from aiogram.types import (
 from aiogram.client.session.aiohttp import AiohttpSession
 
 from auth.db import get_db
-from config.settings import API_TOKEN
+from config.settings import API_TOKEN, Callbacks
 from auth.repository import UserRepository
 
 
@@ -21,13 +21,13 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 TIME = '14:30'
-DAY = 15
+DAY = 14
 
 
 async def send_message(user, message):
     async with AiohttpSession() as session:
         operator = Bot(API_TOKEN, session=session)
-        yes_button = InlineKeyboardButton(text="Да", callback_data='send')
+        yes_button = InlineKeyboardButton(text="Да", callback_data=Callbacks.SEND.value)
         keyboard_inline = InlineKeyboardMarkup(inline_keyboard=[[yes_button]])
         await operator.send_message(user.tg_id, message, reply_markup=keyboard_inline)
 

@@ -1,30 +1,13 @@
 from aiogoogle import Aiogoogle
 
-from config.settings import (
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    AUTH_HOST,
-)
+from config.settings import GOOGLE_CLIENT_CREDS
 
 
-CLIENT_CREDS = {
-    'client_id': GOOGLE_CLIENT_ID,
-    'client_secret': GOOGLE_CLIENT_SECRET,
-    'scopes': [
-        'https://www.googleapis.com/auth/gmail.readonly',
-        'https://www.googleapis.com/auth/gmail.send',
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-    ],
-    'redirect_uri': f'{AUTH_HOST}/callback/gmail',
-}
-
-aiogoogle_client = Aiogoogle()
+aiogoogle_client = Aiogoogle(client_creds=GOOGLE_CLIENT_CREDS)
 
 
 def get_authorize_url(tg_id: int):
-    uri = Aiogoogle().oauth2.authorization_url(
-        client_creds=CLIENT_CREDS,
+    uri = aiogoogle_client.oauth2.authorization_url(
         state=tg_id,
         access_type="offline",
         include_granted_scopes=True,

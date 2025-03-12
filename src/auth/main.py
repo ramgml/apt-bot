@@ -1,18 +1,18 @@
 from datetime import datetime
 import logging
 
-from fastapi import FastAPI, Depends, RedirectResponse
+from fastapi import FastAPI, Depends
+from fastapi.responses import RedirectResponse
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from aiogoogle import Aiogoogle
-from aiogoogle.auth.creds import ClientCreds
-
-from auth.utils import aiogoogle_client, CLIENT_CREDS
 from auth.db import get_db
 from auth.repository import UserRepository
+from auth.utils import aiogoogle_client
+
+from config.settings import BOT_URL
 
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -27,34 +27,19 @@ async def callback(db: AsyncSession = Depends(get_db), code: str | None = None, 
     if code is None:
         return {"error": "No code received"}
 
-    user_creds = await aiogoogle_client.oauth2.build_user_creds(
-        grant=code,
-        client_creds=CLIENT_CREDS,
-    )
+    async with aiogoogle_client as google:
+        google.user_creds = await google.oauth2.build_user_creds(grant=code)
+        gmail = await google.discover('gmail', 'v1')
+        request = gmail.users.getProfile(userId="me")
+        profile = await google.as_user(request)
+        log.info('Profile: %s', profile)
 
-    expires_at = datetime.fromisoformat(user_creds['expires_at'])
-
-    client_creds = ClientCreds(
-        client_id=CLIENT_CREDS['client_id'],
-        client_secret=CLIENT_CREDS['client_secret'],
-        scopes=CLIENT_CREDS['scopes'],
-    )
-
-    async with Aiogoogle(user_creds=user_creds, client_creds=client_creds) as google:
-        gmail = await google.discover('gmail', 'v1',)
-        profile = await google.as_user(
-            gmail.users.getProfile(userId="me"),
+        await UserRepository(db).update_or_create(
+            tg_id=state,
+            access_token=google.user_creds['access_token'],
+            refresh_token=google.user_creds['refresh_token'],
+            expires_at=datetime.fromisoformat(google.user_creds['expires_at']),
+            email_from=profile['emailAddress'],
         )
 
-    repo = UserRepository(db)
-
-    await repo.update_or_create(
-        tg_id=state,
-        access_token=user_creds['access_token'],
-        refresh_token=user_creds['refresh_token'],
-        expires_at=expires_at,
-        email_from=profile['emailAddress'],
-    )
-    log.info('Profile: %s', profile)
-
-    return RedirectResponse(url='https://t.me/apt_179_bot')
+    return RedirectResponse(url=BOT_URL)
