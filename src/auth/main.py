@@ -22,7 +22,7 @@ app = FastAPI(
 )
 
 
-@app.get('/callback/gmail')
+@app.get('aptbot/callback/gmail')
 async def callback(db: AsyncSession = Depends(get_db), code: str | None = None, state: str | None = None):
     """Callback from Google OAuth2."""
     if code is None:
