@@ -1,15 +1,29 @@
 FROM python:3.12-slim
 
-ENV PYTHONUNBUFFERED=1 \
-    LANG=ru_RU.UTF-8 \
-    LANGUAGE=ru_RU:ru \
-    LC_ALL=ru_RU.UTF-8 \
-    TERM=xterm-256color
+ENV PYTHONUNBUFFERED=1
+
+
+# RUN apt-get update && apt-get install -y \
+#     gcc \
+#     postgresql-client \
+#     && rm -rf /var/lib/apt/lists/*
+
+RUN pip install uv
 
 WORKDIR /app
 
-COPY requirements.txt /tmp/requirements.txt
+ENV UV_COMPILE_BYTECODE=1
 
-RUN pip3 install --upgrade pip && pip3 install --no-cache-dir -r /tmp/requirements.txt
+ENV UV_LINK_MODE=copy
 
-COPY src/ /app/
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
+
+COPY pyproject.toml uv.lock /app/
+
+RUN uv sync --locked --no-dev
+
+COPY src/ /app/src/
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+ENV PYTHONPATH="/app/src"

@@ -13,18 +13,20 @@ from aiogram.types import (
 from aiogram.client.session.aiohttp import AiohttpSession
 
 from auth.db import get_db
-from config.settings import API_TOKEN, Callbacks
+from auth.models import User
+from core.config import API_TOKEN, Callbacks
 from auth.repository import UserRepository
 
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 TIME = '14:30'
 DAY = 14
 
 
-async def send_message(user, message):
+async def send_message(user: User, message: str) -> None:
     async with AiohttpSession() as session:
         operator = Bot(API_TOKEN, session=session)
         yes_button = InlineKeyboardButton(text="Да", callback_data=Callbacks.SEND.value)
@@ -32,20 +34,20 @@ async def send_message(user, message):
         await operator.send_message(user.tg_id, message, reply_markup=keyboard_inline)
 
 
-async def ask_question(message):
+async def ask_question(message: str) -> None:
     if datetime.now().day != DAY:
         return
 
     async with asynccontextmanager(get_db)() as db:
         repo = UserRepository(db)
         async for user in repo.iterate_all():
-            send_message(user, message)
+            await send_message(user, message)
 
 
 aioschedule.every().day.at(TIME).do(ask_question, message='Готовы отправить показания?')
 
 
-async def main():
+async def main() -> None:
     log.info('Start scheduler')
     while True:
         await aioschedule.run_pending()

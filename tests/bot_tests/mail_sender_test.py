@@ -1,6 +1,6 @@
 import base64
 
-from bot.main import make_email_message
+from bot.mail_sender import make_email_message
 
 
 def test_make_email_message():
