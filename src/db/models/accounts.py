@@ -32,3 +32,6 @@ class Account(ActiveMixin, BaseModel):
         back_populates="accounts",
     )
     number: Mapped[str] = mapped_column(String)
+
+    def __repr__(self) -> str:
+        return f"Account(id={self.id}, user_id={self.user_id}, utility_provider_id={self.utility_provider_id}, number={self.number})"

@@ -1,6 +1,6 @@
 from datetime import datetime
 from datetime import timezone
-from sqlalchemy import DateTime, MetaData
+from sqlalchemy import DateTime, MetaData, func
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -36,13 +36,13 @@ class PrimaryKeyMixin:
 @declarative_mixin
 class DateTimeMixin:
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now(tz=timezone.utc),
+        DateTime(timezone=True),
+        server_default=func.now(),
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now(tz=timezone.utc),
-        onupdate=datetime.now(tz=timezone.utc),
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
     )
 
 
