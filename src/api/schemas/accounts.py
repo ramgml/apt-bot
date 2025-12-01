@@ -1,6 +1,7 @@
 from pydantic import BaseModel
+from typing import Optional
 
-from api.schemas.companies import UtilityCompanyBase
+from api.schemas.companies import UtilityProviderBase
 
 
 class AccountBase(BaseModel):
@@ -9,7 +10,7 @@ class AccountBase(BaseModel):
 
 class AccountResponse(AccountBase):
     id: int
-    utility_company: UtilityCompanyBase
+    utility_provider: Optional[UtilityProviderBase]
 
     class Config:
         from_attributes = True

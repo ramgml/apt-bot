@@ -1,6 +1,6 @@
 # Импортируем модели в правильном порядке, чтобы избежать циклических зависимостей
 from db.models.base import BaseModel
-from db.models.utility_companies import UtilityCompany
+from db.models.utility_providers import UtilityProvider
 from db.models.users import User
 from db.models.accounts import Account
 from db.models.readings import Reading
@@ -9,7 +9,7 @@ from db.models.auth_tokens import AuthToken
 
 __all__ = [
     "BaseModel",
-    "UtilityCompany",
+    "UtilityProvider",
     "User",
     "Account",
     "Reading",

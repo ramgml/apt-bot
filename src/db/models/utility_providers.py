@@ -12,8 +12,8 @@ from db.models.accounts import Account
 from db.models.readings import Reading
 
 
-class UtilityCompany(BaseModel):
-    __tablename__ = "utility_companies"
+class UtilityProvider(BaseModel):
+    __tablename__ = "utility_providers"
 
     name: Mapped[str] = mapped_column(
         String(255),
@@ -23,9 +23,9 @@ class UtilityCompany(BaseModel):
     )
     accounts: Mapped[list["Account"]] = relationship(
         "Account",
-        back_populates="utility_company",
+        back_populates="utility_provider",
     )
     readings: Mapped[list["Reading"]] = relationship(
         "Reading",
-        back_populates="utility_company",
+        back_populates="utility_provider",
     )

@@ -12,7 +12,7 @@ from db.models.base import Base
 from db.models.users import User  # noqa
 from db.models.auth_tokens import AuthToken  # noqa
 from db.models.readings import Reading  # noqa
-from db.models.utility_companies import UtilityCompany  # noqa
+from db.models.utility_providers import UtilityProvider  # noqa
 from db.models.accounts import Account  # noqa
 
 

@@ -10,7 +10,7 @@ from db.models.base import ActiveMixin, BaseModel
 
 if TYPE_CHECKING:
     from db.models import User
-    from db.models import UtilityCompany
+    from db.models import UtilityProvider
 
 
 class Account(ActiveMixin, BaseModel):
@@ -23,11 +23,12 @@ class Account(ActiveMixin, BaseModel):
         "User",
         back_populates="accounts",
     )
-    utility_company_id: Mapped[int] = mapped_column(
-        ForeignKey("utility_companies.id"),
+    utility_provider_id: Mapped[int | None] = mapped_column(
+        ForeignKey("utility_providers.id"),
+        nullable=True,
     )
-    utility_company: Mapped["UtilityCompany"] = relationship(
-        "UtilityCompany",
+    utility_provider: Mapped["UtilityProvider"] = relationship(
+        "UtilityProvider",
         back_populates="accounts",
     )
     number: Mapped[str] = mapped_column(String)

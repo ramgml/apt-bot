@@ -10,7 +10,7 @@ from db.models.base import BaseModel
 
 if TYPE_CHECKING:
     from db.models import User
-    from db.models import UtilityCompany
+    from db.models import UtilityProvider
 
 
 class Reading(BaseModel):
@@ -23,11 +23,11 @@ class Reading(BaseModel):
         "User",
         back_populates="readings",
     )
-    utility_company_id: Mapped[int] = mapped_column(
-        ForeignKey("utility_companies.id"),
+    utility_provider_id: Mapped[int] = mapped_column(
+        ForeignKey("utility_providers.id"),
     )
-    utility_company: Mapped["UtilityCompany"] = relationship(
-        "UtilityCompany",
+    utility_provider: Mapped["UtilityProvider"] = relationship(
+        "UtilityProvider",
         back_populates="readings",
     )
     value: Mapped[str] = mapped_column(

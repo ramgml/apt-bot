@@ -20,7 +20,7 @@ class AccountRepository(BaseRepository[Account]):
 
     async def get_by_user(self, user: "User") -> list[Account]:
         stmt = select(Account).where(Account.user_id == user.id).options(
-            selectinload(Account.utility_company)
+            selectinload(Account.utility_provider)
         )
         result = await self.session.execute(stmt)
         return list(result.scalars().all())

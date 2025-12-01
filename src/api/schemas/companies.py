@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class UtilityCompanyBase(BaseModel):
+class UtilityProviderBase(BaseModel):
     id: int
     name: str
     email: str
